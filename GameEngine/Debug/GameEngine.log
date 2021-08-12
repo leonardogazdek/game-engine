@@ -1,0 +1,3 @@
+﻿  main.cpp
+C:\Users\gazda\source\repos\GameEngine\GameEngine\main.cpp(119,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  GameEngine.vcxproj -> C:\Users\gazda\source\repos\GameEngine\Debug\GameEngine.exe
