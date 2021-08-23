@@ -5,15 +5,15 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include "GameData.h"
+#include "Player.h"
 
-// You shouldn't really use this statement, but it's fine for small programs
 using namespace std;
 
 unsigned int maxFps = 250;
 
 // You must include the command line parameters for your main function to be recognized by SDL
 int main(int argc, char** args) {
-
 	// Pointers to our window and surface
 	SDL_Window* window = NULL;
 	SDL_Renderer* renderer = NULL;
@@ -37,14 +37,14 @@ int main(int argc, char** args) {
 		return 1;
 	}
 
-	renderer = SDL_CreateRenderer(window, -1, 0);
+	GameData().GetInstance()->window = window;
 
-	float rectX = 10.0f, rectY = 10.0f;
+	renderer = SDL_CreateRenderer(window, -1, 0);
 
 	bool stop = false;
 
-	float deltaX = 0.0f, deltaY = 0.0f;
 	Uint32 lastUpdate = SDL_GetTicks();
+	Player player = Player();
 	while (!stop) {
 		Uint64 start = SDL_GetPerformanceCounter();
 		SDL_Event event;
@@ -54,41 +54,8 @@ int main(int argc, char** args) {
 					stop = true;
 					break;
 				}
-				case SDL_KEYDOWN: {
-					switch (event.key.keysym.sym) {
-						case SDLK_DOWN: {
-							deltaY = 3.0f;
-							break;
-						}
-						case SDLK_UP: {
-							deltaY = -3.0f;
-							break;
-						}
-						case SDLK_LEFT: {
-							deltaX = -3.0f;
-							break;
-						}
-						case SDLK_RIGHT: {
-							deltaX = 3.0f;
-							break;
-						}
-
-						break;
-					}
-					break;
-				}
-				case SDL_KEYUP: {
-					SDL_KeyCode verticalMovementKeys[] = { SDLK_DOWN, SDLK_UP };
-					SDL_KeyCode horizontalMovementKeys[] = { SDLK_LEFT, SDLK_RIGHT };
-					if (std::find(std::begin(verticalMovementKeys), std::end(verticalMovementKeys), event.key.keysym.sym) != std::end(verticalMovementKeys)) {
-						deltaY = 0.0f;
-					}
-					if (std::find(std::begin(horizontalMovementKeys), std::end(horizontalMovementKeys), event.key.keysym.sym) != std::end(horizontalMovementKeys)) {
-						deltaX = 0.0f;
-					}
-					break;
-				}
 			}
+			player.HandleEvents(&event);
 		}
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 		SDL_RenderClear(renderer);
@@ -98,17 +65,16 @@ int main(int argc, char** args) {
 		// Calculate dT (in seconds)
 
 		float dT = (current - lastUpdate) / 10.0f;
-		rectX = std::max(rectX + deltaX * dT, 0.0f);
-		rectY = std::max(rectY + deltaY * dT, 0.0f);
+
+		player.HandlePhysics(dT);
 
 		lastUpdate = current;
 
 
 		// DRAW
-		SDL_Rect rect1{(int)rectX, (int)rectY, 10, 10};
 
-		SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
-		SDL_RenderDrawRect(renderer, &rect1);
+		player.HandleDrawing(renderer);
+
 		SDL_RenderPresent(renderer);
 
 		Uint64 end = SDL_GetPerformanceCounter();
