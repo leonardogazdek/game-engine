@@ -1,2 +1,3 @@
-﻿  Player.cpp
+﻿  main.cpp
+C:\Users\Gazdx\Desktop\game-engine\GameEngine\main.cpp(101,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   GameEngine.vcxproj -> C:\Users\Gazdx\Desktop\game-engine\Debug\GameEngine.exe

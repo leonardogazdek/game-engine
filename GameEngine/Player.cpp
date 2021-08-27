@@ -1,18 +1,36 @@
 #include "Player.h"
 
-#define JUMP_MAX_VELOCITY 6.0f
+#define JUMP_MAX_VELOCITY 10.0f
 #define JUMP_DECCEL 0.05f
 
+#define GRAVITY 3.0f
 
-Player::Player() {
-	int w, h;
-	SDL_GetWindowSize(GameData().GetInstance()->window, &w, &h);
+
+
+
+Player::Player(SDL_Renderer* renderer) {
+	this->renderer = renderer;
 	playerX = 10.0f;
-	playerY = h - 20.0f;
+	playerY = 200.0f;
 	deltaX = 0.0f;
 	deltaY = 0.0f;
 	jumpDelta = 0.0f;
-	jumping = false;
+	movementKeysPressed = 0;
+
+	playerRect.x = (int)playerX;
+	playerRect.y = (int)playerY;
+	playerRect.w = 100;
+	playerRect.h = 200;
+
+	canJump = false;
+
+	imageTexture = IMG_Load("character.png");
+
+	playerTexture = SDL_CreateTextureFromSurface(renderer, imageTexture);
+}
+
+Player::~Player() {
+	SDL_DestroyTexture(playerTexture);
 }
 
 void Player::HandleEvents(SDL_Event* event) {
@@ -20,18 +38,19 @@ void Player::HandleEvents(SDL_Event* event) {
 		case SDL_KEYDOWN: {
 			switch (event->key.keysym.sym) {
 				case SDLK_UP: {
-					if (jumpDelta == 0) {
+					if (canJump) {
 						jumpDelta = JUMP_MAX_VELOCITY;
-						jumping = true;
 					}
 					break;
 				}
 				case SDLK_LEFT: {
 					deltaX = -3.0f;
+					movementKeysPressed++;
 					break;
 				}
 				case SDLK_RIGHT: {
 					deltaX = 3.0f;
+					movementKeysPressed++;
 					break;
 				}
 				break;
@@ -52,25 +71,40 @@ void Player::HandleEvents(SDL_Event* event) {
 	}
 }
 
-void Player::HandlePhysics(float dT) {
-	if (jumping) {
-		int w, h;
-		SDL_GetWindowSize(GameData().GetInstance()->window, &w, &h);
+void Player::HandlePhysics(float dT, Obstacles* obstacles) {
+	float tempX = std::max(playerX + deltaX * dT, 0.0f);
+	float tempY = std::max(playerY + (GRAVITY - jumpDelta) * dT, 0.0f);
 
-		jumpDelta = jumpDelta - JUMP_DECCEL;
-		if (jumpDelta < 0.0f && playerY > h - 20.0f) {
-			jumpDelta = 0.0f;
-			jumping = false;
+	jumpDelta = std::max(jumpDelta - JUMP_DECCEL, 0.0f);
+
+	SDL_Rect tempRect{ (int)tempX, (int)tempY, 100, 200 };
+	bool collisionFound = false;
+	SDL_Rect intersectRect;
+	for (Obstacle &o : *(obstacles->GetObstacles())) {
+		if (SDL_IntersectRect(&tempRect, o.GetRect(), &intersectRect)) {
+			collisionFound = true;
+			std::cout << intersectRect.w <<"," << intersectRect.h << std::endl;
+			break;
 		}
 	}
 
-	playerX = std::max(playerX + deltaX * dT, 0.0f);
-	playerY = std::max(playerY - jumpDelta * dT, 0.0f);
+	if (!collisionFound || (collisionFound && (intersectRect.w > intersectRect.h))) {
+		playerX = tempX;
+		playerRect.x = (int)playerX;
+	}
+	if (tempY < 520.0f && (!collisionFound || (collisionFound && (intersectRect.w < intersectRect.h)))) {
+		playerY = tempY;
+		playerRect.y = (int)playerY;
+		canJump = false;
+	}
+	else {
+		canJump = true;
+	}
+	
+
 }
 
-void Player::HandleDrawing(SDL_Renderer* renderer) {
-	SDL_Rect rect1{ (int)playerX, (int)playerY, 10, 10 };
+void Player::HandleDrawing() {
+	SDL_RenderCopy(renderer, playerTexture, NULL, &playerRect);
 
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawRect(renderer, &rect1);
 }

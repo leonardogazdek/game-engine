@@ -7,18 +7,21 @@
 #include <algorithm>
 #include "GameData.h"
 #include "Player.h"
+#include <SDL_image.h>
+#include "Obstacle.h"
+#include "CollisionMap.h"
 
 using namespace std;
 
 unsigned int maxFps = 250;
 
-// You must include the command line parameters for your main function to be recognized by SDL
+const int resX = 1280;
+const int resY = 720;
+
 int main(int argc, char** args) {
-	// Pointers to our window and surface
 	SDL_Window* window = NULL;
 	SDL_Renderer* renderer = NULL;
 
-	// Initialize SDL. SDL_Init will return -1 if it fails.
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 		cout << "Error initializing SDL: " << SDL_GetError() << endl;
 		system("pause");
@@ -26,10 +29,8 @@ int main(int argc, char** args) {
 		return 1;
 	}
 
-	// Create our window
-	window = SDL_CreateWindow("Example", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Example", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, resX, resY, SDL_WINDOW_SHOWN);
 
-	// Make sure creating the window succeeded
 	if (!window) {
 		cout << "Error creating window: " << SDL_GetError() << endl;
 		system("pause");
@@ -37,14 +38,22 @@ int main(int argc, char** args) {
 		return 1;
 	}
 
-	GameData().GetInstance()->window = window;
-
-	renderer = SDL_CreateRenderer(window, -1, 0);
-
+	GameData gData;
+	gData.GetInstance()->window = window;
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+	SDL_RenderSetScale(renderer, resX/1280.0f, resY/720.0f);
 	bool stop = false;
 
 	Uint32 lastUpdate = SDL_GetTicks();
-	Player player = Player();
+	Player player = Player(renderer);
+
+	Obstacles obs(renderer);
+
+	obs.Add(Obstacle(renderer, SDL_Rect{ 300, 600, 100, 120 }, "house.png"));
+
+	SDL_Surface* backgroundImg = IMG_Load("background.jpg");
+	SDL_Texture* backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundImg);
+	
 	while (!stop) {
 		Uint64 start = SDL_GetPerformanceCounter();
 		SDL_Event event;
@@ -57,8 +66,7 @@ int main(int argc, char** args) {
 			}
 			player.HandleEvents(&event);
 		}
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-		SDL_RenderClear(renderer);
+		
 		// PHYSICS
 		Uint32 current = SDL_GetTicks();
 
@@ -66,14 +74,22 @@ int main(int argc, char** args) {
 
 		float dT = (current - lastUpdate) / 10.0f;
 
-		player.HandlePhysics(dT);
+		player.HandlePhysics(dT, &obs);
 
 		lastUpdate = current;
 
 
 		// DRAW
 
-		player.HandleDrawing(renderer);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+		SDL_RenderClear(renderer);
+
+		SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL);
+
+
+		obs.Draw();
+		player.HandleDrawing();
+		
 
 		SDL_RenderPresent(renderer);
 
@@ -85,10 +101,6 @@ int main(int argc, char** args) {
 		int delay = abs(1000.0f / maxFps - elapsedMS);
 		SDL_Delay(delay);
 	}
-
-	
-
-	
 
 	// Destroy the window. This will also destroy the surface
 	SDL_DestroyWindow(window);
