@@ -10,8 +10,8 @@
 #include <SDL_image.h>
 #include "Obstacle.h"
 #include "CollisionMap.h"
-
-using namespace std;
+#include <fstream>
+#include <cstdint>
 
 unsigned int maxFps = 250;
 
@@ -23,7 +23,7 @@ int main(int argc, char** args) {
 	SDL_Renderer* renderer = NULL;
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-		cout << "Error initializing SDL: " << SDL_GetError() << endl;
+		std::cout << "Error initializing SDL: " << SDL_GetError() << std::endl;
 		system("pause");
 		// End the program
 		return 1;
@@ -32,9 +32,8 @@ int main(int argc, char** args) {
 	window = SDL_CreateWindow("Example", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, resX, resY, SDL_WINDOW_SHOWN);
 
 	if (!window) {
-		cout << "Error creating window: " << SDL_GetError() << endl;
+		std::cout << "Error creating window: " << SDL_GetError() << std::endl;
 		system("pause");
-		// End the program
 		return 1;
 	}
 
@@ -45,13 +44,37 @@ int main(int argc, char** args) {
 	bool stop = false;
 
 	Uint32 lastUpdate = SDL_GetTicks();
-	Player player = Player(renderer);
+
+	std::ifstream mapFile("maps/first.gmap", std::ios::binary);
+
+	std::uint16_t startingPosX, startingPosY, obstacles;
+	mapFile.read(reinterpret_cast<char*>(&startingPosX), sizeof(startingPosX));
+	mapFile.read(reinterpret_cast<char*>(&startingPosY), sizeof(startingPosY));
+	mapFile.read(reinterpret_cast<char*>(&obstacles), sizeof(obstacles));
+
 
 	Obstacles obs(renderer);
+	for (int i = 0; i < obstacles; i++) {
+		std::uint16_t x, y, w, h;
+		char textureFile[50];
 
-	obs.Add(Obstacle(renderer, SDL_Rect{ 300, 600, 100, 120 }, "house.png"));
+		mapFile.read(reinterpret_cast<char*>(&x), sizeof(x));
+		mapFile.read(reinterpret_cast<char*>(&y), sizeof(y));
+		mapFile.read(reinterpret_cast<char*>(&w), sizeof(w));
+		mapFile.read(reinterpret_cast<char*>(&h), sizeof(h));
+		mapFile.read(textureFile, sizeof(textureFile));
 
-	SDL_Surface* backgroundImg = IMG_Load("background.jpg");
+		obs.Add(Obstacle(renderer, SDL_Rect{ x, y, w, h }, std::string("textures/" + std::string(textureFile)).c_str()));
+	}
+	
+	mapFile.close();
+
+
+
+	Player player = Player(renderer, startingPosX, startingPosY);
+
+
+	SDL_Surface* backgroundImg = IMG_Load("textures/background.jpg");
 	SDL_Texture* backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundImg);
 	
 	while (!stop) {
@@ -95,19 +118,14 @@ int main(int argc, char** args) {
 
 		Uint64 end = SDL_GetPerformanceCounter();
 
-		float elapsedMS = (end - start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;
+		float elapsedMS = (end - start) / static_cast<float>(SDL_GetPerformanceFrequency()) * 1000.0f;
 
-		// Cap to 60 FPS
+
 		int delay = abs(1000.0f / maxFps - elapsedMS);
 		SDL_Delay(delay);
 	}
 
-	// Destroy the window. This will also destroy the surface
 	SDL_DestroyWindow(window);
-
-	// Quit SDL
 	SDL_Quit();
-
-	// End the program
 	return 0;
 }

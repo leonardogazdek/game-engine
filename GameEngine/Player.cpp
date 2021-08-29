@@ -5,26 +5,22 @@
 
 #define GRAVITY 3.0f
 
-
-
-
-Player::Player(SDL_Renderer* renderer) {
+Player::Player(SDL_Renderer* renderer, int x, int y) {
 	this->renderer = renderer;
-	playerX = 10.0f;
-	playerY = 200.0f;
+	playerX = static_cast<float>(x);
+	playerY = static_cast<float>(y);
 	deltaX = 0.0f;
 	deltaY = 0.0f;
 	jumpDelta = 0.0f;
-	movementKeysPressed = 0;
 
-	playerRect.x = (int)playerX;
-	playerRect.y = (int)playerY;
+	playerRect.x = static_cast<int>(playerX);
+	playerRect.y = static_cast<int>(playerY);
 	playerRect.w = 100;
 	playerRect.h = 200;
 
 	canJump = false;
 
-	imageTexture = IMG_Load("character.png");
+	imageTexture = IMG_Load("textures/character.png");
 
 	playerTexture = SDL_CreateTextureFromSurface(renderer, imageTexture);
 }
@@ -45,12 +41,10 @@ void Player::HandleEvents(SDL_Event* event) {
 				}
 				case SDLK_LEFT: {
 					deltaX = -3.0f;
-					movementKeysPressed++;
 					break;
 				}
 				case SDLK_RIGHT: {
 					deltaX = 3.0f;
-					movementKeysPressed++;
 					break;
 				}
 				break;
@@ -77,7 +71,7 @@ void Player::HandlePhysics(float dT, Obstacles* obstacles) {
 
 	jumpDelta = std::max(jumpDelta - JUMP_DECCEL, 0.0f);
 
-	SDL_Rect tempRect{ (int)tempX, (int)tempY, 100, 200 };
+	SDL_Rect tempRect{ static_cast<int>(tempX), static_cast<int>(tempY), 100, 200 };
 	bool collisionFound = false;
 	SDL_Rect intersectRect;
 	for (Obstacle &o : *(obstacles->GetObstacles())) {
@@ -90,11 +84,11 @@ void Player::HandlePhysics(float dT, Obstacles* obstacles) {
 
 	if (!collisionFound || (collisionFound && (intersectRect.w > intersectRect.h))) {
 		playerX = tempX;
-		playerRect.x = (int)playerX;
+		playerRect.x = static_cast<int>(playerX);
 	}
-	if (tempY < 520.0f && (!collisionFound || (collisionFound && (intersectRect.w < intersectRect.h)))) {
+	if (tempY < (720 - playerRect.h) && (!collisionFound || (collisionFound && (intersectRect.w < intersectRect.h)))) {
 		playerY = tempY;
-		playerRect.y = (int)playerY;
+		playerRect.y = static_cast<int>(playerY);
 		canJump = false;
 	}
 	else {

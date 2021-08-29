@@ -13,14 +13,13 @@ private:
 	float playerX, playerY;
 	float deltaX, deltaY;
 	float jumpDelta;
-	unsigned int movementKeysPressed;
 	SDL_Rect playerRect;
 	SDL_Surface* imageTexture;
 	SDL_Texture* playerTexture;
 	SDL_Renderer* renderer;
 	bool canJump;
 public:
-	Player(SDL_Renderer* renderer);
+	Player(SDL_Renderer* renderer, int x, int y);
 	~Player();
 	void HandleEvents(SDL_Event* event);
 	void HandlePhysics(float dT, Obstacles* obstacles);

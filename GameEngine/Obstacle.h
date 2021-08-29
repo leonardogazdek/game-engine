@@ -24,7 +24,6 @@ private:
 public:
 	Obstacles(SDL_Renderer* renderer);
 	void Add(Obstacle obstacle);
-	CollisionMap GenerateAutoCollision();
 	void Draw();
 	std::vector<Obstacle>* GetObstacles();
 };
