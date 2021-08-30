@@ -5,13 +5,17 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include <memory>
 #include "GameData.h"
 #include "Player.h"
 #include <SDL_image.h>
 #include "Obstacle.h"
-#include "CollisionMap.h"
 #include <fstream>
 #include <cstdint>
+#include "UIHandler.h"
+#include "UIElement.h"
+#include "UIWindow.h"
+
 
 unsigned int maxFps = 250;
 
@@ -29,7 +33,7 @@ int main(int argc, char** args) {
 		return 1;
 	}
 
-	window = SDL_CreateWindow("Example", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, resX, resY, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, resX, resY, SDL_WINDOW_SHOWN);
 
 	if (!window) {
 		std::cout << "Error creating window: " << SDL_GetError() << std::endl;
@@ -37,11 +41,26 @@ int main(int argc, char** args) {
 		return 1;
 	}
 
-	GameData gData;
-	gData.GetInstance()->window = window;
+	GameData::GetInstance()->window = window;
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
 	SDL_RenderSetScale(renderer, resX/1280.0f, resY/720.0f);
 	bool stop = false;
+
+	GameData::GetInstance()->renderer = renderer;
+
+	int imgFlags = IMG_INIT_PNG;
+	if (!(IMG_Init(imgFlags) & imgFlags))
+	{
+		printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+		return 1;
+	}
+
+	if (TTF_Init() == -1)
+	{
+		printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+		return 1;
+	}
+
 
 	Uint32 lastUpdate = SDL_GetTicks();
 
@@ -76,6 +95,12 @@ int main(int argc, char** args) {
 
 	SDL_Surface* backgroundImg = IMG_Load("textures/background.jpg");
 	SDL_Texture* backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundImg);
+
+	UIHandler uiHandler;
+
+	auto testWindow = std::make_shared<UIWindow>("My window", 1000, 600);
+	auto windowPtr = std::dynamic_pointer_cast<UIElement>(testWindow);
+	uiHandler.Add(windowPtr);
 	
 	while (!stop) {
 		Uint64 start = SDL_GetPerformanceCounter();
@@ -112,8 +137,7 @@ int main(int argc, char** args) {
 
 		obs.Draw();
 		player.HandleDrawing();
-		
-
+		uiHandler.Draw();
 		SDL_RenderPresent(renderer);
 
 		Uint64 end = SDL_GetPerformanceCounter();

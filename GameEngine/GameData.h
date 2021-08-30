@@ -7,7 +7,8 @@ private:
 	static GameData* Instance;
 public:
 	GameData();
-	GameData* GetInstance();
+	static GameData* GetInstance();
 	SDL_Window* window;
+	SDL_Renderer* renderer;
 
 };
