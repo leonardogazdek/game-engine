@@ -104,9 +104,9 @@ int main(int argc, char** args) {
 	auto testWindow = std::make_shared<UIWindow>("My window", 1000, 600);
 	auto testButton = std::make_shared<UIButton>(300, 300, 300, 50, "wyd", []() { std::cout << "test" << std::endl;});
 	auto testButton2 = std::make_shared<UIButton>(300, 500, 300, 50, "wyd2", []() { std::cout << "test2" << std::endl;});
-	uiHandler.Add(std::dynamic_pointer_cast<UIElement>(testWindow));
-	uiHandler.Add(std::dynamic_pointer_cast<UIElement>(testButton));
-	uiHandler.Add(std::dynamic_pointer_cast<UIElement>(testButton2));
+	uiHandler.Add(testWindow);
+	uiHandler.Add(testButton);
+	uiHandler.Add(testButton2);
 
 	while (!stop) {
 		std::uint64_t start = SDL_GetPerformanceCounter();
@@ -152,7 +152,7 @@ int main(int argc, char** args) {
 		float elapsedMS = (end - start) / static_cast<float>(SDL_GetPerformanceFrequency()) * 1000.0f;
 
 
-		int delay = abs(1000.0f / maxFps - elapsedMS);
+		int delay = static_cast<int>(abs(1000.0f / maxFps - elapsedMS));
 		SDL_Delay(delay);
 	}
 

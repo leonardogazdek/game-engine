@@ -2,9 +2,6 @@
 
 GameData* GameData::Instance = nullptr;
 
-GameData::GameData() {
-	window = nullptr;
-}
 
 GameData* GameData::GetInstance() {
 	if (Instance == nullptr) {
