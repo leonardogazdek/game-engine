@@ -1,5 +1,2 @@
 ﻿  UIHandler.cpp
-  main.cpp
-C:\Users\Gazdx\Desktop\game-engine\GameEngine\main.cpp(153,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  Generating Code...
   GameEngine.vcxproj -> C:\Users\Gazdx\Desktop\game-engine\Debug\GameEngine.exe

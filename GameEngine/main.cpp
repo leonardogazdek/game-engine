@@ -6,13 +6,14 @@
 #include <iterator>
 #include <algorithm>
 #include <memory>
-#include "GameData.h"
-#include "Player.h"
 #include <SDL_image.h>
-#include "Obstacle.h"
 #include <fstream>
 #include <cstdint>
 #include <functional>
+
+#include "Player.h"
+#include "Obstacle.h"
+#include "GameData.h"
 #include "UIHandler.h"
 #include "UIElement.h"
 #include "UIWindow.h"
@@ -50,7 +51,7 @@ int main(int argc, char** args) {
 
 	GameData::GetInstance()->renderer = renderer;
 
-	int imgFlags = IMG_INIT_PNG;
+	int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
 	if (!(IMG_Init(imgFlags) & imgFlags))
 	{
 		printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
@@ -102,13 +103,13 @@ int main(int argc, char** args) {
 
 	auto testWindow = std::make_shared<UIWindow>("My window", 1000, 600);
 	auto testButton = std::make_shared<UIButton>(300, 300, 300, 50, "wyd", []() { std::cout << "test" << std::endl;});
+	auto testButton2 = std::make_shared<UIButton>(300, 500, 300, 50, "wyd2", []() { std::cout << "test2" << std::endl;});
 	uiHandler.Add(std::dynamic_pointer_cast<UIElement>(testWindow));
 	uiHandler.Add(std::dynamic_pointer_cast<UIElement>(testButton));
-
-	uiHandler.HighlightSelectedButton();
+	uiHandler.Add(std::dynamic_pointer_cast<UIElement>(testButton2));
 
 	while (!stop) {
-		Uint64 start = SDL_GetPerformanceCounter();
+		std::uint64_t start = SDL_GetPerformanceCounter();
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -118,6 +119,7 @@ int main(int argc, char** args) {
 				}
 			}
 			player.HandleEvents(&event);
+			uiHandler.HandleEvents(&event);
 		}
 		
 		// PHYSICS
@@ -145,7 +147,7 @@ int main(int argc, char** args) {
 		uiHandler.Draw();
 		SDL_RenderPresent(renderer);
 
-		Uint64 end = SDL_GetPerformanceCounter();
+		std::uint64_t end = SDL_GetPerformanceCounter();
 
 		float elapsedMS = (end - start) / static_cast<float>(SDL_GetPerformanceFrequency()) * 1000.0f;
 

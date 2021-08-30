@@ -26,5 +26,6 @@ public:
     void Draw();
     void Highlight();
     void RemoveHighlight();
+    void CallAction();
 };
 

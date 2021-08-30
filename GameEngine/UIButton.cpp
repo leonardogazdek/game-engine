@@ -40,3 +40,7 @@ void UIButton::Highlight() {
 void UIButton::RemoveHighlight() {
 	this->highlighted = false;
 }
+
+void UIButton::CallAction() {
+	this->action();
+}

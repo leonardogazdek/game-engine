@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <SDL.h>
 #include "UIElement.h"
 #include "UIButton.h"
 
@@ -11,11 +12,12 @@ private:
 	int highlightedButton;
 	void HighlightPrevButton();
 	void HighlightNextButton();
+	void HighlightSelectedButton();
 public:
 	UIHandler();
 	void Draw();
 	void Add(const std::shared_ptr<UIElement> &element);
 	int CountBtns();
-	void HighlightSelectedButton();
+	void HandleEvents(SDL_Event* ev);
 };
 
