@@ -1,11 +1,57 @@
 #include "UIHandler.h"
 
+UIHandler::UIHandler() {
+	highlightedButton = 0;
+}
+
 void UIHandler::Draw() {
 	for (auto& element : elements) {
 		element->Draw();
 	}
 }
 
-void UIHandler::Add(std::shared_ptr<UIElement> &element) {
+void UIHandler::Add(const std::shared_ptr<UIElement> &element) {
 	elements.push_back(element);
+}
+
+void UIHandler::HighlightNextButton() {
+	highlightedButton++;
+	if (highlightedButton >= CountBtns()) {
+		highlightedButton = 0;
+	}
+	HighlightSelectedButton();
+}
+
+void UIHandler::HighlightPrevButton() {
+	highlightedButton--;
+	if (highlightedButton < 0) {
+		highlightedButton = CountBtns() - 1;
+	}
+	HighlightSelectedButton();
+}
+
+void UIHandler::HighlightSelectedButton() {
+	int btnIndex = 0;
+	for (auto const &el : elements) {
+		auto btnPtr = std::dynamic_pointer_cast<UIButton>(el);
+		if (btnPtr != nullptr) {
+			if (btnIndex == highlightedButton) {
+				btnPtr->Highlight();
+			}
+			else {
+				btnPtr->RemoveHighlight();
+			}
+			btnIndex++;
+		}
+	}
+}
+
+int UIHandler::CountBtns() {
+	int count = 0;
+	for (auto& el : elements) {
+		if (std::dynamic_pointer_cast<UIButton>(el) != nullptr) {
+			count++;
+		}
+	}
+	return count;
 }

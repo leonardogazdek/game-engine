@@ -33,9 +33,4 @@ void UIWindow::Draw() {
 	SDL_SetRenderDrawColor(rend, 200, 200, 200, SDL_ALPHA_OPAQUE);
 	SDL_RenderFillRect(rend, &titleBarRect);
 	SDL_RenderCopy(rend, titleTexture, NULL, &titleRect);
-
-	SDL_Surface* martinVukSurf = IMG_Load("textures/martin.jpg");
-	SDL_Texture* martinVukTexture = SDL_CreateTextureFromSurface(rend, martinVukSurf);
-	SDL_Rect martinVukRect{ 300, 300, 600, 300 };
-	SDL_RenderCopy(rend, martinVukTexture, NULL, &martinVukRect);
 }

@@ -1,7 +1,7 @@
 #include "Player.h"
 
 #define JUMP_MAX_VELOCITY 10.0f
-#define JUMP_DECCEL 0.05f
+#define JUMP_DECCEL 0.15f
 
 #define GRAVITY 3.0f
 
@@ -69,7 +69,7 @@ void Player::HandlePhysics(float dT, Obstacles* obstacles) {
 	float tempX = std::max(playerX + deltaX * dT, 0.0f);
 	float tempY = std::max(playerY + (GRAVITY - jumpDelta) * dT, 0.0f);
 
-	jumpDelta = std::max(jumpDelta - JUMP_DECCEL, 0.0f);
+	jumpDelta = std::max(jumpDelta - JUMP_DECCEL * dT, 0.0f);
 
 	SDL_Rect tempRect{ static_cast<int>(tempX), static_cast<int>(tempY), 100, 200 };
 	bool collisionFound = false;

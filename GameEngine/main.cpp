@@ -12,9 +12,11 @@
 #include "Obstacle.h"
 #include <fstream>
 #include <cstdint>
+#include <functional>
 #include "UIHandler.h"
 #include "UIElement.h"
 #include "UIWindow.h"
+#include "UIButton.h"
 
 
 unsigned int maxFps = 250;
@@ -99,9 +101,12 @@ int main(int argc, char** args) {
 	UIHandler uiHandler;
 
 	auto testWindow = std::make_shared<UIWindow>("My window", 1000, 600);
-	auto windowPtr = std::dynamic_pointer_cast<UIElement>(testWindow);
-	uiHandler.Add(windowPtr);
-	
+	auto testButton = std::make_shared<UIButton>(300, 300, 300, 50, "wyd", []() { std::cout << "test" << std::endl;});
+	uiHandler.Add(std::dynamic_pointer_cast<UIElement>(testWindow));
+	uiHandler.Add(std::dynamic_pointer_cast<UIElement>(testButton));
+
+	uiHandler.HighlightSelectedButton();
+
 	while (!stop) {
 		Uint64 start = SDL_GetPerformanceCounter();
 		SDL_Event event;
