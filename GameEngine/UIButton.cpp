@@ -1,6 +1,6 @@
 #include "UIButton.h"
 
-UIButton::UIButton(int x, int y, int w, int h, std::string btnText, std::function<void()> action) {
+UIButton::UIButton(int x, int y, int w, int h, std::string btnText, const std::function<void()> &action) {
 	this->action = action;
 	this->x = x;
 	this->y = y;

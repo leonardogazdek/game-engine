@@ -1,6 +1,6 @@
 #include "Obstacle.h"
 
-Obstacle::Obstacle(SDL_Renderer* renderer, SDL_Rect rect, const char* textureImgFile) {
+Obstacle::Obstacle(SDL_Renderer* const renderer, SDL_Rect rect, const char* textureImgFile) {
 	this->renderer = renderer;
 	this->rect = rect;
 	this->textureImg = IMG_Load(textureImgFile);
@@ -15,7 +15,7 @@ SDL_Rect* Obstacle::GetRect() {
 	return &(this->rect);
 }
 
-Obstacles::Obstacles(SDL_Renderer* renderer) {
+Obstacles::Obstacles(SDL_Renderer* const renderer) {
 	this->renderer = renderer;
 }
 
@@ -24,7 +24,7 @@ void Obstacles::Add(Obstacle obstacle) {
 }
 
 void Obstacles::Draw() {
-	for (Obstacle& o : obstacles) {
+	for (Obstacle& const o : obstacles) {
 		o.Draw();
 	}
 }

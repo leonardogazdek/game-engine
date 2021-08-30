@@ -50,9 +50,6 @@
     <ClInclude Include="Obstacle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="UIHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>

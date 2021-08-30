@@ -5,7 +5,7 @@ UIHandler::UIHandler() {
 }
 
 void UIHandler::Draw() {
-	for (auto& element : elements) {
+	for (auto const& element : elements) {
 		element->Draw();
 	}
 }
@@ -33,7 +33,7 @@ void UIHandler::HighlightPrevButton() {
 
 void UIHandler::HighlightSelectedButton() {
 	int btnIndex = 0;
-	for (auto const &el : elements) {
+	for (auto const& el : elements) {
 		auto btnPtr = std::dynamic_pointer_cast<UIButton>(el);
 		if (btnPtr != nullptr) {
 			if (btnIndex == highlightedButton) {
@@ -49,7 +49,7 @@ void UIHandler::HighlightSelectedButton() {
 
 int UIHandler::CountBtns() {
 	int count = 0;
-	for (auto& el : elements) {
+	for (auto const& el : elements) {
 		if (std::dynamic_pointer_cast<UIButton>(el) != nullptr) {
 			count++;
 		}
@@ -57,7 +57,7 @@ int UIHandler::CountBtns() {
 	return count;
 }
 
-void UIHandler::HandleEvents(SDL_Event* ev) {
+void UIHandler::HandleEvents(SDL_Event* const ev) {
 	switch (ev->type) {
 		case SDL_KEYDOWN: {
 			switch (ev->key.keysym.sym) {

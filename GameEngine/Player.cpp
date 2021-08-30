@@ -5,7 +5,7 @@
 
 #define GRAVITY 3.0f
 
-Player::Player(SDL_Renderer* renderer, int x, int y) {
+Player::Player(SDL_Renderer* const renderer, int x, int y) {
 	this->renderer = renderer;
 	playerX = static_cast<float>(x);
 	playerY = static_cast<float>(y);
@@ -29,7 +29,7 @@ Player::~Player() {
 	SDL_DestroyTexture(playerTexture);
 }
 
-void Player::HandleEvents(SDL_Event* event) {
+void Player::HandleEvents(SDL_Event* const event) {
 	switch (event->type) {
 		case SDL_KEYDOWN: {
 			switch (event->key.keysym.sym) {
@@ -65,7 +65,7 @@ void Player::HandleEvents(SDL_Event* event) {
 	}
 }
 
-void Player::HandlePhysics(float dT, Obstacles* obstacles) {
+void Player::HandlePhysics(float dT, Obstacles* const obstacles) {
 	float tempX = std::max(playerX + deltaX * dT, 0.0f);
 	float tempY = std::max(playerY + (GRAVITY - jumpDelta) * dT, 0.0f);
 

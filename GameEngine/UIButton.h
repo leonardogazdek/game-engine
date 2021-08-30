@@ -22,7 +22,7 @@ private:
     bool highlighted;
 
 public:
-    UIButton(int x, int y, int w, int h, std::string btnText, std::function<void()> action);
+    UIButton(int x, int y, int w, int h, std::string btnText, const std::function<void()>& action);
     void Draw();
     void Highlight();
     void RemoveHighlight();

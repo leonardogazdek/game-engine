@@ -155,7 +155,6 @@
     <ClCompile Include="UIWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CollisionMap.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="Player.h" />
