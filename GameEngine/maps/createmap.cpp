@@ -28,8 +28,8 @@ int main() {
 	std::cout << "Starting pos X: "; std::cin >> startingPosX;
 	std::cout << "Starting pos Y: "; std::cin >> startingPosY;
 
-	mapfile.write((char*)&startingPosX, sizeof(startingPosX));
-	mapfile.write((char*)&startingPosY, sizeof(startingPosY));
+	mapfile.write(reinterpret_cast<char*>(&startingPosX), sizeof(startingPosX));
+	mapfile.write(reinterpret_cast<char*>(&startingPosY), sizeof(startingPosY));
 
 	int option;
 	do {
@@ -49,13 +49,13 @@ int main() {
 
 	std::uint16_t Nobstacles = obstacles.size();
 
-	mapfile.write((char*)&Nobstacles, sizeof(Nobstacles));
+	mapfile.write(reinterpret_cast<char*>(&Nobstacles), sizeof(Nobstacles));
 
 	for(Obstacle &o : obstacles) {
-		mapfile.write((char*)&o.x, sizeof(o.x));
-		mapfile.write((char*)&o.y, sizeof(o.y));
-		mapfile.write((char*)&o.w, sizeof(o.w));
-		mapfile.write((char*)&o.h, sizeof(o.h));
+		mapfile.write(reinterpret_cast<char*>(&o.x), sizeof(o.x));
+		mapfile.write(reinterpret_cast<char*>(&o.y), sizeof(o.y));
+		mapfile.write(reinterpret_cast<char*>(&o.w), sizeof(o.w));
+		mapfile.write(reinterpret_cast<char*>(&o.h), sizeof(o.h));
 		mapfile.write(o.textureFile, sizeof(o.textureFile));
 	}
 
