@@ -24,7 +24,7 @@ void Obstacles::Add(Obstacle obstacle) {
 }
 
 void Obstacles::Draw() {
-	for (Obstacle& const o : obstacles) {
+	for (Obstacle &o : this->obstacles) {
 		o.Draw();
 	}
 }

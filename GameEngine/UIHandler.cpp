@@ -1,4 +1,5 @@
 #include "UIHandler.h"
+#include "UIButton.h"
 
 UIHandler::UIHandler() {
 	highlightedButton = 0;
@@ -87,4 +88,29 @@ void UIHandler::HandleEvents(SDL_Event* const ev) {
 			break;
 		}
 	}
+}
+
+const std::shared_ptr<UIWindow> UIHandler::GetWindow() {
+	for (auto const& el : elements) {
+		auto windowPtr = std::dynamic_pointer_cast<UIWindow>(el);
+		if (windowPtr != nullptr) {
+			return windowPtr;
+		}
+	}
+	return nullptr;
+}
+
+SDL_Rect* UIHandler::GetBottomElementRect() {
+	int maxY = 0;
+	SDL_Rect* result = nullptr;
+	for (auto const& el : elements) {
+		if (el->IsAutoLayout()) {
+			SDL_Rect* r = el->GetRect();
+			if (r->y > maxY) {
+				maxY = r->y;
+				result = r;
+			}
+		}
+	}
+	return result;
 }

@@ -10,6 +10,8 @@
 #include <fstream>
 #include <cstdint>
 #include <functional>
+#include <filesystem>
+#include <string>
 
 #include "Player.h"
 #include "Obstacle.h"
@@ -67,6 +69,28 @@ int main(int argc, char** args) {
 
 	Uint32 lastUpdate = SDL_GetTicks();
 
+	UIHandler uiHandler;
+
+	auto testWindow = std::make_shared<UIWindow>("Choose level", 1000, 600);
+	
+	uiHandler.Add(testWindow);
+	
+
+	std::string path = "maps/";
+	for (const auto& entry : std::filesystem::directory_iterator(path)) {
+		std::string mapname = entry.path().string();
+		size_t dotIdx = mapname.find(".");
+		std::string extension = mapname.substr(dotIdx+1);
+		size_t slashIdx = mapname.find("/");
+		std::string mapName = mapname.substr(slashIdx + 1, dotIdx - slashIdx -1);
+		if (extension == "gmap") {
+			auto testButton = std::make_shared<UIButton>(uiHandler, mapName, []() { std::cout << "test" << std::endl;});
+
+			uiHandler.Add(testButton);
+		}
+	}
+		
+
 	std::ifstream mapFile("maps/first.gmap", std::ios::binary);
 
 	std::uint16_t startingPosX, startingPosY, obstacles;
@@ -99,14 +123,7 @@ int main(int argc, char** args) {
 	SDL_Surface* backgroundImg = IMG_Load("textures/background.jpg");
 	SDL_Texture* backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundImg);
 
-	UIHandler uiHandler;
-
-	auto testWindow = std::make_shared<UIWindow>("My window", 1000, 600);
-	auto testButton = std::make_shared<UIButton>(300, 300, 300, 50, "wyd", []() { std::cout << "test" << std::endl;});
-	auto testButton2 = std::make_shared<UIButton>(300, 500, 300, 50, "wyd2", []() { std::cout << "test2" << std::endl;});
-	uiHandler.Add(testWindow);
-	uiHandler.Add(testButton);
-	uiHandler.Add(testButton2);
+	
 
 	while (!stop) {
 		std::uint64_t start = SDL_GetPerformanceCounter();

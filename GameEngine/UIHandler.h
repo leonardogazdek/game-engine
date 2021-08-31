@@ -1,9 +1,10 @@
 #pragma once
-#include <vector>
+
 #include <memory>
 #include <SDL.h>
+#include <vector>
 #include "UIElement.h"
-#include "UIButton.h"
+#include "UIWindow.h"
 
 class UIHandler
 {
@@ -19,5 +20,7 @@ public:
 	void Add(const std::shared_ptr<UIElement> &element);
 	int CountBtns();
 	void HandleEvents(SDL_Event* ev);
+	const std::shared_ptr<UIWindow> GetWindow();
+	SDL_Rect* GetBottomElementRect();
 };
 

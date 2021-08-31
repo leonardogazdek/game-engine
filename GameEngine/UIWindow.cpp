@@ -24,6 +24,7 @@ UIWindow::UIWindow(std::string windowTitle, int w, int h) {
 	titleBarRect.y = this->y + 5;
 	titleBarRect.w = this->w - 10;
 	titleBarRect.h = titleSurface->h;
+	this->autoLayout = false;
 }
 
 void UIWindow::Draw() {
@@ -33,4 +34,12 @@ void UIWindow::Draw() {
 	SDL_SetRenderDrawColor(rend, 200, 200, 200, SDL_ALPHA_OPAQUE);
 	SDL_RenderFillRect(rend, &titleBarRect);
 	SDL_RenderCopy(rend, titleTexture, NULL, &titleRect);
+}
+
+SDL_Rect* UIWindow::GetRect() {
+	return &this->windowRect;
+}
+
+bool UIWindow::IsAutoLayout() {
+	return this->autoLayout;
 }

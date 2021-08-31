@@ -22,5 +22,7 @@ private:
 public:
     UIWindow(std::string windowTitle, int w, int h);
     void Draw();
+    SDL_Rect* GetRect();
+    bool IsAutoLayout();
 };
 

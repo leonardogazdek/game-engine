@@ -3,7 +3,6 @@
 #include <map>
 #include <SDL.h>
 #include <SDL_image.h>
-#include "CollisionMap.h"
 
 class Obstacle {
 private:
