@@ -8,10 +8,11 @@ void MapData::LoadMap(std::string mapName) {
 	std::string mapPath = "maps/" + mapName + ".gmap";
 	std::ifstream mapFile(mapPath.c_str(), std::ios::binary);
 
+	mapFile.read(background, sizeof(background));
 	mapFile.read(reinterpret_cast<char*>(&startingPosX), sizeof(startingPosX));
 	mapFile.read(reinterpret_cast<char*>(&startingPosY), sizeof(startingPosY));
 	mapFile.read(reinterpret_cast<char*>(&obstacles), sizeof(obstacles));
-
+	obs = Obstacles(GameData::GetInstance()->renderer);
 	for (int i = 0; i < obstacles; i++) {
 		std::uint16_t x, y, w, h;
 		char textureFile[50];

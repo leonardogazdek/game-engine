@@ -91,7 +91,7 @@ int main(int argc, char** args) {
 		player = std::make_shared<Player>(renderer, map.startingPosX, map.startingPosY);
 
 
-		backgroundImg = IMG_Load("textures/background.jpg");
+		backgroundImg = IMG_Load(std::string("textures/" + std::string(map.background)).c_str());
 		backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundImg);
 		map.mapLoaded = true;
 	};
