@@ -10,6 +10,7 @@ struct Obstacle {
 
 int main() {
  	// GMAP file format
+	// (char[50]) background
 	// (uint16_t) startingPosX
 	// (uint16_t) startingPosY
 	// (uint16_t) obstacles
@@ -20,14 +21,18 @@ int main() {
 
 
 	std::ofstream mapfile("first.gmap", std::ios::binary);
+	char background[50];
 	std::uint16_t startingPosX = 0;
 	std::uint16_t startingPosY = 0;
 	std::vector<Obstacle> obstacles;
 
 
+	std::cout << "Background image file name: "; std::cin >> background;
+
 	std::cout << "Starting pos X: "; std::cin >> startingPosX;
 	std::cout << "Starting pos Y: "; std::cin >> startingPosY;
 
+	mapfile.write(background, sizeof(background));
 	mapfile.write(reinterpret_cast<char*>(&startingPosX), sizeof(startingPosX));
 	mapfile.write(reinterpret_cast<char*>(&startingPosY), sizeof(startingPosY));
 
