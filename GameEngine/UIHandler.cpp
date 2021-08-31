@@ -114,3 +114,20 @@ SDL_Rect* UIHandler::GetBottomElementRect() {
 	}
 	return result;
 }
+
+void UIHandler::Clear() {
+	elements.clear();
+}
+
+
+void UIHandler::ShowAll() {
+	for (auto const& el : elements) {
+		el->Show();
+	}
+}
+
+void UIHandler::HideAll() {
+	for (auto const& el : elements) {
+		el->Hide();
+	}
+}

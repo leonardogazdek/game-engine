@@ -28,12 +28,14 @@ UIWindow::UIWindow(std::string windowTitle, int w, int h) {
 }
 
 void UIWindow::Draw() {
-	SDL_Renderer* rend = GameData::GetInstance()->renderer;
-	SDL_SetRenderDrawColor(rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
-	SDL_RenderFillRect(rend, &windowRect);
-	SDL_SetRenderDrawColor(rend, 200, 200, 200, SDL_ALPHA_OPAQUE);
-	SDL_RenderFillRect(rend, &titleBarRect);
-	SDL_RenderCopy(rend, titleTexture, NULL, &titleRect);
+	if (show) {
+		SDL_Renderer* rend = GameData::GetInstance()->renderer;
+		SDL_SetRenderDrawColor(rend, 255, 255, 255, SDL_ALPHA_OPAQUE);
+		SDL_RenderFillRect(rend, &windowRect);
+		SDL_SetRenderDrawColor(rend, 200, 200, 200, SDL_ALPHA_OPAQUE);
+		SDL_RenderFillRect(rend, &titleBarRect);
+		SDL_RenderCopy(rend, titleTexture, NULL, &titleRect);
+	}
 }
 
 SDL_Rect* UIWindow::GetRect() {

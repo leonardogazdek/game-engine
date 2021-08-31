@@ -64,10 +64,12 @@ UIButton::UIButton(UIHandler hnd, std::string btnText, const std::function<void(
 
 
 void UIButton::Draw() {
-	SDL_Renderer* rend = GameData::GetInstance()->renderer;
-	SDL_SetRenderDrawColor(rend, (this->highlighted) ? 100 : 200, (this->highlighted) ? 100 : 200, (this->highlighted) ? 100 : 200, SDL_ALPHA_OPAQUE);
-	SDL_RenderFillRect(rend, &btnRect);
-	SDL_RenderCopy(rend, btnTexture, NULL, &textRect);
+	if (show) {
+		SDL_Renderer* rend = GameData::GetInstance()->renderer;
+		SDL_SetRenderDrawColor(rend, (this->highlighted) ? 100 : 200, (this->highlighted) ? 100 : 200, (this->highlighted) ? 100 : 200, SDL_ALPHA_OPAQUE);
+		SDL_RenderFillRect(rend, &btnRect);
+		SDL_RenderCopy(rend, btnTexture, NULL, &textRect);
+	}
 }
 
 void UIButton::Highlight() {

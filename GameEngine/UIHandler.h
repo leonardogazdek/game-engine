@@ -22,5 +22,8 @@ public:
 	void HandleEvents(SDL_Event* ev);
 	const std::shared_ptr<UIWindow> GetWindow();
 	SDL_Rect* GetBottomElementRect();
+	void Clear();
+	void HideAll();
+	void ShowAll();
 };
 

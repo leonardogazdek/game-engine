@@ -5,7 +5,7 @@
 
 #define GRAVITY 3.0f
 
-Player::Player(SDL_Renderer* const renderer, int x, int y) {
+Player::Player(SDL_Renderer* renderer, int x, int y) {
 	this->renderer = renderer;
 	playerX = static_cast<float>(x);
 	playerY = static_cast<float>(y);

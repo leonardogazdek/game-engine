@@ -20,6 +20,7 @@
 #include "UIElement.h"
 #include "UIWindow.h"
 #include "UIButton.h"
+#include "MapData.h"
 
 
 unsigned int maxFps = 250;
@@ -71,57 +72,47 @@ int main(int argc, char** args) {
 
 	UIHandler uiHandler;
 
-	auto testWindow = std::make_shared<UIWindow>("Choose level", 1000, 600);
+	auto levelSelectWindow = std::make_shared<UIWindow>("Choose level", 1000, 600);
 	
-	uiHandler.Add(testWindow);
+	uiHandler.Add(levelSelectWindow);
 	
 
-	std::string path = "maps/";
-	for (const auto& entry : std::filesystem::directory_iterator(path)) {
-		std::string mapname = entry.path().string();
-		size_t dotIdx = mapname.find(".");
-		std::string extension = mapname.substr(dotIdx+1);
-		size_t slashIdx = mapname.find("/");
-		std::string mapName = mapname.substr(slashIdx + 1, dotIdx - slashIdx -1);
-		if (extension == "gmap") {
-			auto testButton = std::make_shared<UIButton>(uiHandler, mapName, []() { std::cout << "test" << std::endl;});
+	
+	MapData map;
 
-			uiHandler.Add(testButton);
-		}
+	std::vector<std::shared_ptr<UIElement> > levelSelectMenu;
+	levelSelectMenu.push_back(levelSelectWindow);
+
+	std::shared_ptr<Player> player = nullptr;
+	SDL_Surface* backgroundImg;
+	SDL_Texture* backgroundTexture;
+
+	auto loadMapData = [&player, &backgroundImg, &backgroundTexture, &map, &renderer]() {
+		player = std::make_shared<Player>(renderer, map.startingPosX, map.startingPosY);
+
+
+		backgroundImg = IMG_Load("textures/background.jpg");
+		backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundImg);
+		map.mapLoaded = true;
+	};
+
+	
+
+	for (const std::string mapName : map.GetAllMaps()) {
+		auto mapBtn = std::make_shared<UIButton>(uiHandler, mapName, [&levelSelectMenu, &uiHandler, mapName, &map, &loadMapData, &renderer]() {
+			map.LoadMap(mapName); 
+			loadMapData(); 
+			for (const auto& elem : levelSelectMenu) {
+				elem->Hide();
+			}
+		});
+		levelSelectMenu.push_back(mapBtn);
+
+		uiHandler.Add(mapBtn);
 	}
-		
 
-	std::ifstream mapFile("maps/first.gmap", std::ios::binary);
-
-	std::uint16_t startingPosX, startingPosY, obstacles;
-	mapFile.read(reinterpret_cast<char*>(&startingPosX), sizeof(startingPosX));
-	mapFile.read(reinterpret_cast<char*>(&startingPosY), sizeof(startingPosY));
-	mapFile.read(reinterpret_cast<char*>(&obstacles), sizeof(obstacles));
-
-
-	Obstacles obs(renderer);
-	for (int i = 0; i < obstacles; i++) {
-		std::uint16_t x, y, w, h;
-		char textureFile[50];
-
-		mapFile.read(reinterpret_cast<char*>(&x), sizeof(x));
-		mapFile.read(reinterpret_cast<char*>(&y), sizeof(y));
-		mapFile.read(reinterpret_cast<char*>(&w), sizeof(w));
-		mapFile.read(reinterpret_cast<char*>(&h), sizeof(h));
-		mapFile.read(textureFile, sizeof(textureFile));
-
-		obs.Add(Obstacle(renderer, SDL_Rect{ x, y, w, h }, std::string("textures/" + std::string(textureFile)).c_str()));
-	}
 	
-	mapFile.close();
-
-
-
-	Player player = Player(renderer, startingPosX, startingPosY);
-
-
-	SDL_Surface* backgroundImg = IMG_Load("textures/background.jpg");
-	SDL_Texture* backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundImg);
+	
 
 	
 
@@ -134,8 +125,20 @@ int main(int argc, char** args) {
 					stop = true;
 					break;
 				}
+				case SDL_KEYDOWN: {
+					switch (event.key.keysym.sym) {
+						case SDLK_ESCAPE: {
+							for (const auto& elem : levelSelectMenu) {
+								elem->Show();
+							}
+							break;
+						}
+					}
+				}
 			}
-			player.HandleEvents(&event);
+			if (map.mapLoaded) {
+				player->HandleEvents(&event);
+			}
 			uiHandler.HandleEvents(&event);
 		}
 		
@@ -146,7 +149,9 @@ int main(int argc, char** args) {
 
 		float dT = (current - lastUpdate) / 10.0f;
 
-		player.HandlePhysics(dT, &obs);
+		if (map.mapLoaded) {
+			player->HandlePhysics(dT, &map.obs);
+		}
 
 		lastUpdate = current;
 
@@ -156,11 +161,14 @@ int main(int argc, char** args) {
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 		SDL_RenderClear(renderer);
 
-		SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL);
+		
 
-
-		obs.Draw();
-		player.HandleDrawing();
+		if (map.mapLoaded) {
+			SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL);
+			map.obs.Draw();
+			player->HandleDrawing();
+		}
+			
 		uiHandler.Draw();
 		SDL_RenderPresent(renderer);
 

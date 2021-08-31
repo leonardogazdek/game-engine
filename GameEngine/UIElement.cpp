@@ -1,2 +1,9 @@
 #include "UIElement.h"
-#include <iostream>
+
+void UIElement::Show() {
+	show = true;
+}
+
+void UIElement::Hide() {
+	show = false;
+}
