@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cstdint>
 #include <vector>
+#include <string>
 
 struct Obstacle {
 	std::uint16_t x, y, w, h;
@@ -19,8 +20,9 @@ int main() {
 	// end repeat
 
 
-
-	std::ofstream mapfile("first.gmap", std::ios::binary);
+	std::string mapName;
+	std::cout << "Enter map name: "; std::cin >> mapName; 
+	std::ofstream mapfile((mapName + ".gmap").c_str(), std::ios::binary);
 	char background[50];
 	std::uint16_t startingPosX = 0;
 	std::uint16_t startingPosY = 0;

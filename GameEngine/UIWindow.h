@@ -6,9 +6,7 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 
-class UIWindow :
-    public UIElement
-{
+class UIWindow : public UIElement {
 private:
     std::string windowTitle;
     int x, y, w, h;

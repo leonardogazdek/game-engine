@@ -21,7 +21,6 @@ Player::Player(SDL_Renderer* renderer, int x, int y) {
 	canJump = false;
 
 	imageTexture = IMG_Load("textures/character.png");
-
 	playerTexture = SDL_CreateTextureFromSurface(renderer, imageTexture);
 }
 
@@ -68,9 +67,7 @@ void Player::HandleEvents(SDL_Event* const event) {
 void Player::HandlePhysics(float dT, Obstacles* const obstacles) {
 	float tempX = std::max(playerX + deltaX * dT, 0.0f);
 	float tempY = std::max(playerY + (GRAVITY - jumpDelta) * dT, 0.0f);
-
 	jumpDelta = std::max(jumpDelta - JUMP_DECCEL * dT, 0.0f);
-
 	SDL_Rect tempRect{ static_cast<int>(tempX), static_cast<int>(tempY), 100, 200 };
 	bool collisionFound = false;
 	SDL_Rect intersectRect;
@@ -81,7 +78,6 @@ void Player::HandlePhysics(float dT, Obstacles* const obstacles) {
 			break;
 		}
 	}
-
 	if (!collisionFound || (collisionFound && (intersectRect.w > intersectRect.h))) {
 		playerX = tempX;
 		playerRect.x = static_cast<int>(playerX);
@@ -94,8 +90,6 @@ void Player::HandlePhysics(float dT, Obstacles* const obstacles) {
 	else {
 		canJump = true;
 	}
-	
-
 }
 
 void Player::HandleDrawing() {

@@ -9,9 +9,7 @@
 
 #include "UIHandler.h"
 
-class UIButton :
-    public UIElement
-{
+class UIButton : public UIElement {
 private:
     std::function<void()> action;
     int x, y, w, h;
@@ -22,8 +20,9 @@ private:
     SDL_Texture* btnTexture;
     bool highlighted;
 public:
+    void InitCommon(std::string& btnText);
     UIButton(int x, int y, int w, int h, std::string btnText, const std::function<void()>& action);
-    UIButton(UIHandler hnd, std::string btnText, const std::function<void()>& action);
+    UIButton(UIHandler &hnd, std::string btnText, const std::function<void()>& action);
     void Draw();
     void Highlight();
     void RemoveHighlight();

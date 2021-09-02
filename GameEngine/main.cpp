@@ -33,17 +33,14 @@ int main(int argc, char** args) {
 	SDL_Renderer* renderer = NULL;
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-		std::cout << "Error initializing SDL: " << SDL_GetError() << std::endl;
-		system("pause");
-		// End the program
+		std::cout << "SDL init failed: " << SDL_GetError() << std::endl;
 		return 1;
 	}
 
 	window = SDL_CreateWindow("Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, resX, resY, SDL_WINDOW_SHOWN);
 
 	if (!window) {
-		std::cout << "Error creating window: " << SDL_GetError() << std::endl;
-		system("pause");
+		std::cout << "Window creation failed: " << SDL_GetError() << std::endl;
 		return 1;
 	}
 
@@ -55,15 +52,13 @@ int main(int argc, char** args) {
 	GameData::GetInstance()->renderer = renderer;
 
 	int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
-	if (!(IMG_Init(imgFlags) & imgFlags))
-	{
-		printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+	if (!(IMG_Init(imgFlags) & imgFlags)) {
+		std::cout << "SDL_image init failed: " << IMG_GetError() << std::endl;
 		return 1;
 	}
 
-	if (TTF_Init() == -1)
-	{
-		printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+	if (TTF_Init() == -1) {
+		std::cout << "SDL_TTF init failed: " << TTF_GetError() << std::endl;
 		return 1;
 	}
 
@@ -96,7 +91,6 @@ int main(int argc, char** args) {
 		map.mapLoaded = true;
 	};
 
-	
 
 	for (const std::string mapName : map.GetAllMaps()) {
 		auto mapBtn = std::make_shared<UIButton>(uiHandler, mapName, [&levelSelectMenu, &uiHandler, mapName, &map, &loadMapData, &renderer]() {
@@ -112,8 +106,6 @@ int main(int argc, char** args) {
 	}
 
 	
-	
-
 	
 
 	while (!stop) {
@@ -145,8 +137,6 @@ int main(int argc, char** args) {
 		// PHYSICS
 		Uint32 current = SDL_GetTicks();
 
-		// Calculate dT (in seconds)
-
 		float dT = (current - lastUpdate) / 10.0f;
 
 		if (map.mapLoaded) {
@@ -168,7 +158,7 @@ int main(int argc, char** args) {
 			map.obs.Draw();
 			player->HandleDrawing();
 		}
-			
+		
 		uiHandler.Draw();
 		SDL_RenderPresent(renderer);
 
@@ -182,6 +172,7 @@ int main(int argc, char** args) {
 	}
 
 	SDL_DestroyWindow(window);
+	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
 	return 0;
 }
